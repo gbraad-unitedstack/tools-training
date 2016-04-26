@@ -287,9 +287,9 @@ Hunt for hogs with ducks
 $ alias ducks='du -cks * | sort -rn | head'
 ```
 
-  * -c produces a grand total
-  * -k same as `block-size=1K`
-  * -s summarize, total for each argument
+  * `-c` produces a grand total
+  * `-k` same as `block-size=1K`
+  * `-s` summarize, total for each argument
 
 
 ## fdisk
@@ -360,7 +360,7 @@ LVs can be moved between PVs.
 
   * four SATA disks, each 250G
   * to be dedicated for storage
-  * separated in fileserver, database, backup
+  * separated in fileshare (450G), database (50G), backup (500G)
 
 Note: this is just an example scenario. It is not suggested to deploy this
 layout in real as it provides no form of redundancy.
@@ -371,16 +371,68 @@ Using `fdisk` we will create a *n*ew *p*rimary partition of type '8e'. We do
 this for each disk.
 
 ```
-$ fdisk /dev/sd[b..e]
+$ fdisk /dev/sdb
+$ fdisk /dev/sdc
+...
 ```
 
-And create the Physical Volumes for them
+
+Note: we do not have to create partitions, but this is often what happens.
+
+
+## Create physical volumes
+And create the Physical Volumes for the partitions we just created
 
 ```
 $ pvcreate /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
 ```
 
+You can check the creation of the physical volumes using `pvdisplay`.
+
+Another way to learn about the physical volumes is to issue a `pvscan`.
+
+
 Note: `pvremove /dev/sdb1` will perform the opposite action.
+
+
+## Create Volume Group
+After this is done, we will create the Volume Group
+
+```
+$ vgcreate storage /dev/sd[b-e]1
+```
+
+You can check the creation of the volume group using `vgdisplay`.
+
+Another way to learn about the volume groups is to issue a `vgscan`.
+
+
+## Create Logical Volumes
+Now we can create the actual logical volumes that represent the actual storage
+locations.
+
+```
+$ lvcreate -n fileshare -L +450G storage
+$ lvcreate -n database -L +50G storage
+$ lvcreate -n backup -L +500G storage
+```
+
+You can check the creation of the logical volumes using `lvdisplay`.
+
+Another way to learn about the logical volumes is to issue a `lvscan`.
+
+
+You will see devices mappings such as `/dev/storage/fileshare`, etc.
+
+
+## Modify Logical Volumes
+Logical volumes can be modified using the following commands
+
+  * `lvremove`
+  * `lvreduce`
+  * `lvextend`
+
+
 
 
 ## iftop
