@@ -150,7 +150,9 @@ check this with.
 $ free -g
 ```
 
-Displayed as gigabytes. To update by interval
+to display as gigabytes.
+
+To update by interval
 
 ```
 $ free -s 5
@@ -182,14 +184,52 @@ $ vmstat -s
 ```
 
 
-## Service monitoring
+## Service management
+Processes on Linux/Unix are owned by the `init` process, which primary role is to
+start processes according to a script from `/etc/inittab` or `/etc/init.d`
 
 ```
 $ service
 ```
 
+is responsible for running a System V init script.
+
+To get an overview of all the services and if they are enabled
+
 ```
-$ systemctl
+$ service --status-all
+```
+
+Restarting a service can be down with
+
+```
+$ service network restart
+```
+
+
+## Enable services
+Services are started according to their location in the runlevel folders.
+
+To disable/enable a service
+
+```
+$ chkconfig disable NetworkManager
+$ chkconfig enable network
+```
+
+It links the scripts in `/etc/rc?.d` accordingly.
+
+
+## Service management
+`systemctl` is a linux command to control the systemd system and service manager.
+
+
+```
+$ systemctl list-units -t service --all
+```
+
+```
+$ systemctl status sshd.service
 ```
 
 
