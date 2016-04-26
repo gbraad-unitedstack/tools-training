@@ -1,7 +1,7 @@
 # UOS 401 - Inspection tools
 
 ### Inspection tools 
-Gerard Braad — 吉拉德
+Gerard Braad
 
 gerard@unitedstack.com
 
@@ -329,6 +329,17 @@ Note: avoid running different commands while performing edits as they can have
 differences in the way they write/store the data.
 
 
+## List partitions
+If you only need to list partitions, just doing
+
+```
+$ cat /proc/partitions
+```
+
+would probably be enough. This is also what we will be using in the remainder
+of the slides when listing partitions.
+
+
 ## LVM
 The Logical Volume Manager (LVM) provides logical volume management for the
 Linux kernel.
@@ -433,6 +444,56 @@ Logical volumes can be modified using the following commands
   * `lvextend`
 
 
+## Create filesystems
+Logical volumes are just mapped devices and need to be provisioned with a
+filesystem. For example, you could use Ext3
+
+```
+$ mkfs.ext4 /dev/storage/fileshare
+$ mkfs.ext4 /dev/storage/database
+$ mkfs.ext4 /dev/storage/backup
+```
+
+After which we can mount our volumes
+
+```
+$ mkdir /media/fileshare /media/database /media/backup
+$ mount /dev/storage/fileshare /media/fileshare
+$ mount /dev/storage/database /media/database
+$ mount /dev/storage/backup /media/backup
+```
+
+
+## Now what
+You can inspect if the storage is available using `df -h`. But also make sure
+you create the entries for these disks are in `/etc/fstab`.
+
+    /dev/storage/fileshare  /media/fileshare  ext4  defaults  0 0
+    /dev/storage/database   /media/database   ext4  defaults  0 0
+    /dev/storage/backup     /media/backup     ext4  defaults  0 0
+
+
+## Changing a disk
+For instance, a disk is not working as expected and needs to be removed.
+
+Prepare the disk
+```
+$ pvcreate /dev/sdf1
+```
+
+Extend the volume group with the new disk and move data over
+```
+$ vgextend storage /dev/sdf1
+$ pvmove /dev/sdb1 /dev/sdf1
+```
+
+And remove the defective disk from the volume group
+```
+$ vgreduce storage /dev/sdb1
+$ pvremove /dev/sdb1
+```
+
+after which the physical disk can be removed.
 
 
 ## iftop
