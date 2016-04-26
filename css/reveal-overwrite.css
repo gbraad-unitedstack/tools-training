@@ -45,6 +45,11 @@
 	padding-bottom: 30px;
 }
 
+.reveal p,
+.reveal .slides {
+    text-align: left;
+}
+
 .reveal .slides section {
     height: 400px;
 }
