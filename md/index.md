@@ -1,6 +1,6 @@
 # UOS 401 - Inspection tools
 
-### Tools 
+### Inspection tools 
 Gerard Braad — 吉拉德
 
 gerard@unitedstack.com
