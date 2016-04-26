@@ -36,11 +36,11 @@ The `ps` program displays the currently-running processes. A related Unix utilit
 
 
 ## ps - Command line options
-Note that "ps -aux" is different than "ps aux".
+Note that `ps -aux` is different than `ps aux`.
 
-  * UNIX options, which may be grouped and must be preceded by a dash ("-")
+  * UNIX options, which may be grouped and must be preceded by a dash (`-`)
   * BSD options, which may be grouped and must not be used with a dash
-  * GNU long options, which are preceded by two dashes ("--")
+  * GNU long options, which are preceded by two dashes (`--`)
 
 
 ## ps - Basic examples
@@ -301,8 +301,8 @@ doesn't understand GUID Partition Table (GPT) and it is not designed for large
 partitions.
 
 
-    Warning: Don’t delete, modify, or add partitions if you don’t know what you
-    are doing. You will lose data!
+    Warning: Don’t delete, modify, or add partitions unless you know what you
+    are doing. There is a risk of data loss!
 
 
 ## fdisk - Basic usage
@@ -325,17 +325,62 @@ $ fdisk [device]
   * cfdisk
   * parted
 
+Note: avoid running different commands while performing edits as they can have
+differences in the way they write/store the data.
+
 
 ## LVM
 The Logical Volume Manager (LVM) provides logical volume management for the
 Linux kernel.
 
-  * Managing large hard disk farms by allowing disks to be added and replaced without downtime or service disruption, in combination with hot swapping.
-  * On small systems (like a desktop at home), instead of having to estimate at installation time how big a partition might need to be in the future, LVM allows file systems to be easily resized later as needed.
+It is implemented as a device mapper target.
+
+
+## LVM usecases
+  * Managing large hard disk farms by allowing disks to be added and replaced
+    without downtime or service disruption, in combination with hot swapping.
+  * On small systems (like a desktop at home), instead of having to estimate at
+    installation time how big a partition might need to be in the future, LVM
+    allows file systems to be easily resized later as needed.
   * Performing consistent backups by taking snapshots of the logical volumes.
-  * Creating single logical volumes of multiple physical volumes or entire hard disks, allowing for dynamic volume resizing.
+  * Creating single logical volumes of multiple physical volumes or entire hard
+    disks, allowing for dynamic volume resizing.
 
 
+## Basic usage
+Volume groups (VGs) can be resized online by absorbing new physical volumes
+(PVs) or ejecting existing ones.
+
+Logical volumes (LVs) can be resized online by concatenating extents onto them
+or truncating extents from them.
+LVs can be moved between PVs.
+
+
+## Scenario
+
+  * four SATA disks, each 250G
+  * to be dedicated for storage
+  * separated in fileserver, database, backup
+
+Note: this is just an example scenario. It is not suggested to deploy this
+layout in real as it provides no form of redundancy.
+
+
+## Partition the disks
+Using `fdisk` we will create a *n*ew *p*rimary partition of type '8e'. We do
+this for each disk.
+
+```
+$ fdisk /dev/sd[b..e]
+```
+
+And create the Physical Volumes for them
+
+```
+$ pvcreate /dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1
+```
+
+Note: `pvremove /dev/sdb1` will perform the opposite action.
 
 
 ## iftop
