@@ -223,14 +223,119 @@ It links the scripts in `/etc/rc?.d` accordingly.
 ## Service management
 `systemctl` is a linux command to control the systemd system and service manager.
 
+To show all services you have to limit to showing the service unit.
 
 ```
 $ systemctl list-units -t service --all
 ```
 
+Note: omitting `--all` will only show active services.
+
+To look at the details of a specific service
+
 ```
 $ systemctl status sshd.service
 ```
+
+You can enable and disable with
+
+```
+$ systemctl enable sshd.service
+```
+
+
+## Disk commands
+
+  * basic commands
+  * fdisk
+
+
+## Disk free
+`df - report file system disk space usage`
+
+`df` (disk free) is a standard Unix command used to display the amount of available disk space for file systems on which the invoking user has appropriate read access.
+
+```
+$ df -h
+```
+
+makes the output human-readable.
+
+
+## Disk usage
+`du - estimate file space usage`
+
+`du` (disk usage) is a standard Unix command used to estimate file space usage—space used under a particular directory or files on a file system.
+
+```
+$ du -h
+```
+
+makes the output human-readable.
+
+
+## Top 10 disk usage
+Often just a few files hog your disk, such as log files or a large disk image.
+
+```
+$ du -a /var | sort -n -r | head -n 10
+```
+
+Hunt for hogs with ducks
+
+```
+$ alias ducks='du -cks * | sort -rn | head'
+```
+
+  * -c produces a grand total
+  * -k same as `block-size=1K`
+  * -s summarize, total for each argument
+
+
+## fdisk
+Hard disks can be divided into one or more logical disks called partitions. This
+division is described in the partition table found in sector 0 of the disk.
+
+`fdisk` is a command-line utility that provides disk partitioning functions. It
+doesn't understand GUID Partition Table (GPT) and it is not designed for large
+partitions.
+
+
+    Warning: Don’t delete, modify, or add partitions if you don’t know what you
+    are doing. You will lose data!
+
+
+## fdisk - Basic usage
+With the following command you can list all partitions.
+
+```
+$ fdisk -l
+```
+
+To modify partitions you can use the following command.
+
+```
+$ fdisk [device]
+```
+
+
+## Alternatives fdisk
+
+  * sfdisk
+  * cfdisk
+  * parted
+
+
+## LVM
+The Logical Volume Manager (LVM) provides logical volume management for the
+Linux kernel.
+
+  * Managing large hard disk farms by allowing disks to be added and replaced without downtime or service disruption, in combination with hot swapping.
+  * On small systems (like a desktop at home), instead of having to estimate at installation time how big a partition might need to be in the future, LVM allows file systems to be easily resized later as needed.
+  * Performing consistent backups by taking snapshots of the logical volumes.
+  * Creating single logical volumes of multiple physical volumes or entire hard disks, allowing for dynamic volume resizing.
+
+
 
 
 ## iftop
@@ -263,20 +368,6 @@ Ping is a computer network administration software utility used to test the reac
 In computing, traceroute is a computer network diagnostic tool for displaying the route and measuring transit delays of packets across an Internet Protocol network. The history of the route is
 
 
-## fdisk
-For computer file systems, fdisk is a command-line utility that provides disk partitioning functions.
-
-
-## LVM
-In Linux, Logical Volume Manager (LVM) is a device mapper target that provides logical volume management for the Linux kernel.
-
-
-## df
-df (abbreviation for disk free) is a standard Unix command used to display the amount of available disk space for file systems on which the invoking user has appropriate read access. df is implemented using the statfs or statvfs system calls.
-
-
-## du
-du (abbreviated from disk usage) is a standard Unix program used to estimate file space usage—space used under a particular directory or files on a file system.
 
 
 ## strace
@@ -294,4 +385,6 @@ GNU Debugger. The standard debugger for the GNU operating system.
 
 
 ## pdb
-he module pdb defines an interactive source code debugger for Python programs. It supports setting (conditional) breakpoints and single stepping at the source line level, inspection of stack frames, source code listing, and evaluation of arbitrary Python code in the context of any stack fr…
+The module pdb defines an interactive source code debugger for Python programs. It supports setting (conditional) breakpoints and single stepping at the source line level, inspection of stack frames, source code listing, and evaluation of arbitrary Python code in the context of any stack frame.
+
+These libraries help you with Python development: the debugger enables you to step through code, analyze stack frames and set breakpoints etc., and the profilers run code and give you a detailed breakdown of execution times, 
