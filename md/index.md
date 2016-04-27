@@ -1076,18 +1076,17 @@ It is not a standard tool that is available for CentOS 7. However, it can be
 found in EPEL for EL6.
 
 
-
 ## brctl
-brctl is used to set up, maintain, and inspect the ethernet bridge configuration in the linux kernel.
-An ethernet bridge is a device commonly used to connect different networks of ethernets together, so that these ethernets will appear as one ethernet to the participants.
+`brctl` is used to set up, maintain, and inspect the ethernet bridge
+configuration in the linux kernel. A bridge is used to connect different
+networks of ethernets together, so that these ethernets will appear as one
+to the connected interfaces.
 
+To show all current instances of ethernet bridges use the command:
 
-
-
-## strace
-strace is a diagnostic, debugging and instructional userspace utility for Linux. It is used to monitor interactions between processes and the Linux kernel, which include system calls, signal deliveries, and changes of process state. The operation of strace is made possible by the kernel feature known as ptrace.
-
-systemtap
+```
+$ brctl show
+```
 
 
 ## lsof
@@ -1096,6 +1095,15 @@ lsof is a command meaning "list open files", which is used in many Unix-like sys
 ```
 $ lsof -i
 ```
+
+---
+
+
+## strace
+strace is a diagnostic, debugging and instructional userspace utility for Linux. It is used to monitor interactions between processes and the Linux kernel, which include system calls, signal deliveries, and changes of process state. The operation of strace is made possible by the kernel feature known as ptrace.
+
+systemtap
+
 
 ## gdb
 GNU Debugger. The standard debugger for the GNU operating system.
