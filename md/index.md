@@ -16,6 +16,7 @@ The following tools described can help you in pinpointing issues.
 
 
 ## Divide them into categories
+
   * General tools
   * Disk
   * Network
@@ -57,7 +58,6 @@ $ ps
 
 
 ## ps - Basic examples
-
 To see every process running on the system, using the standard syntax:
 
 ```
@@ -76,7 +76,6 @@ This does
 
 
 ## ps - Basic examples
-
 To see every process on the system, using BSD syntax:
 
 ```
@@ -292,6 +291,13 @@ $ alias ducks='du -cks * | sort -rn | head'
   * `-s` summarize, total for each argument
 
 
+## Disk
+
+  * preparation tools
+  * mapping
+  * consistency check
+
+
 ## fdisk
 Hard disks can be divided into one or more logical disks called partitions. This
 division is described in the partition table found in sector 0 of the disk.
@@ -496,25 +502,87 @@ $ pvremove /dev/sdb1
 after which the physical disk can be removed.
 
 
-## iftop
-iftop is a command-line system monitor tool that produces a frequently-updated list of network connections. By default, the connections are ordered by bandwidth usage, with only the "top" bandwidth …
+## Unrecoverable disk
+A disk has failed and a backup is not available. The data has to be considered
+lost, but we want to recover the data in the remaining disks. 
+
+Create the LVM meta data on the new disk using the old disk's UUID that
+`pvscan` displays.
+
+```
+$ pvcreate --uuid 42oKek-5zLS-ckbD-e7vJ-gB42-YyQY-hwTRSu /dev/sdd1
+```
+
+Now the volume group can be restored
+
+```
+$ vgcfgrestore storage
+$ vgscan
+$ vgchange -ay storage
+```
+
+after which the volume group should be available. Note: run a filesystem
+consistency check, such as `fsck.ext4`.
 
 
-## tcpdump
-tcpdump is a common packet analyzer that runs under the command line. It allows the user to display TCP/IP and other packets being transmitted or received over a network to which the computer is attached. Distribut
+## Corrupted LVM meta data
+This should not happen often, but when it happens the Logical Volumes should
+also be considered as unreliable.
+
+```
+$ vgchange -ay storage
+```
+
+Will in this case it might show `Checksum error` and 
+
+    Couldn't read volume group metadata.
+    Volume group storage metadata is inconsistent
+    
+The volume group will not activate.
+
+
+## Continued
+If the disks are still inserted it would be possible to restore the metadata.
+Check if the physical volumes can still be found in the metadata.
+
+```
+$ pvscan
+```
+
+If so, it would be possible to restore the volume group
+
+```
+$ vgcfgrestore storage
+$ vgchange -ay storage
+```
+
+Now the volumegroup should be available again.
+
+
+## Missing disk
+If the `pvscan` does not find the disk.
+
+    Couldn't find device with uuid '42oKek-5zLS-ckbD-e7vJ-gB42-YyQY-hwTRSu'.
+
+It is possible to replace the disk and recreate it using the same UUID. The
+solution is similar to replacing the disk as detailed earlier.
+
+```
+$ pvcreate --uuid 42oKek-5zLS-ckbD-e7vJ-gB42-YyQY-hwTRSu /dev/sdd1
+$ vgcfgrestore storage
+$ vgscan
+$ vgchange -ay storage
+```
+
+After which you need to run a consistency check against the volume.
+
+
+## Network
+Connectivity
 
 
 ## ip
 iproute2 is a collection of userspace utilities for controlling and monitoring various aspects of networking in the Linux kernel, including routing, network interfaces, tunnels, traffic control, and network-related device drivers.
-
-
-## brctl
-brctl is used to set up, maintain, and inspect the ethernet bridge configuration in the linux kernel.
-An ethernet bridge is a device commonly used to connect different networks of ethernets together, so that these ethernets will appear as one ethernet to the participants.
-
-
-## arping
-Arping is a computer software tool for discovering and probing hosts on a computer network. Arping probes hosts on the attached network link by sending Link Layer frames using the Address Resolution Protocol request method addressed to a host identified by its MAC address of the network interface. The utility program may use ARP to resolve an IP 
 
 
 ## ping
@@ -525,6 +593,23 @@ Ping is a computer network administration software utility used to test the reac
 ## traceroute (tracepath)
 In computing, traceroute is a computer network diagnostic tool for displaying the route and measuring transit delays of packets across an Internet Protocol network. The history of the route is
 
+
+
+## iftop
+iftop is a command-line system monitor tool that produces a frequently-updated list of network connections. By default, the connections are ordered by bandwidth usage, with only the "top" bandwidth …
+
+
+## tcpdump
+tcpdump is a common packet analyzer that runs under the command line. It allows the user to display TCP/IP and other packets being transmitted or received over a network to which the computer is attached. Distribut
+
+
+## brctl
+brctl is used to set up, maintain, and inspect the ethernet bridge configuration in the linux kernel.
+An ethernet bridge is a device commonly used to connect different networks of ethernets together, so that these ethernets will appear as one ethernet to the participants.
+
+
+## arping
+Arping is a computer software tool for discovering and probing hosts on a computer network. Arping probes hosts on the attached network link by sending Link Layer frames using the Address Resolution Protocol request method addressed to a host identified by its MAC address of the network interface. The utility program may use ARP to resolve an IP 
 
 
 
