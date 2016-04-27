@@ -890,11 +890,164 @@ The first column shows the TTL of the probe.
 `tcpdump` is a common command line packet analyzer. It allows the user to display
 TCP/IP and other packets being transmitted or received.
 
+To install
+```
+$ yum install -y tcpdump
+```
 
+And run:
+
+```
+$ tcpdump
+```
+
+You will have to terminate with ^C when you have received enough packets.
+
+
+## Examples of tcpdump
+Use the `-i` parameter to listen on all interfaces
+
+```
+$ tcpdump -i any
+```
+
+or 
+
+```
+$ tcpdump -i eth0
+```
+
+to listen on `eth0` only.
+
+
+## Examples of tcpdump
+In some case you would not want to see resolved hostnames. You can prevent this
+with `-n`. Using `-nn` will also prevent from resolving port names.
+
+```
+$ tcpdump -nS
+```
+
+Using `-S` will print absolute sequence numbers.
+
+
+## Examples of tcpdump
+To see the content of the packets you can use
+
+```
+$ tcpdump -nnvvXSs 0
+```
+
+And to see specifically ICMP packets, do:
+
+```
+$ tcpdump -nnvvXSs 0 icmp
+```
+
+    15:12:21.498049 IP (tos 0x0, ttl 64, id 56897, offset 0, flags [none], proto ICMP (1), length 84)
+        10.1.22.69 > 104.154.53.169: ICMP echo reply, id 11105, seq 13, length 64
+            0x0000:  4500 0054 de41 0000 4001 ddde 0a01 1645  E..T.A..@......E
+            0x0010:  689a 35a9 0000 e191 2b61 000d 5566 2057  h.5.....+a..Uf.W
+            0x0020:  0000 0000 b66f 0800 0000 0000 1011 1213  .....o..........
+            0x0030:  1415 1617 1819 1a1b 1c1d 1e1f 2021 2223  .............!"#
+            0x0040:  2425 2627 2829 2a2b 2c2d 2e2f 3031 3233  $%&'()*+,-./0123
+            0x0050:  3435 3637                                4567
+
+
+## Examples of tcpdump expressions
+Using expressions you can filter out various types of traffic to find that you
+are looking for.
+
+Using `host` you can look for an IP address (or hostname):
+```
+$ tcpdump host 192.168.50.101
+```
+
+Using `src` and `dst` you only see traffic from source or destination:
+```
+$ tcpdump src 8.8.8.8
+$ tcpdump dst 8.8.4.4
+```
+
+Using `net` you can capture an entire network using CIDR notation: 
+```
+$ tcpdump net 192.168.50.0/24
+```
+
+Using proto you can look for `tcp`, `udp`, and `icmp` specific traffic: 
+```
+$ tcpdump icmp
+```
+
+## Examples of tcpdump expressions Continued
+
+Using `port` you can limit to a specific port:
+```
+$ tcpdump port 21
+```
+
+Using `src port` and `dst port` you can filter based on the source or
+destination port:
+```
+$ tcpdump src port 1025 
+$ tcpdump dst port 80
+```
+
+They can also be combined to create complex expressions
+```
+$ tcpdump src port 1025 and tcp 
+$ tcpdump udp and src port 53
+```
+
+Using `portrange` you can filter for a range of ports instead:
+```
+tcpdump portrange 21-23
+```
+
+
+## Examples of tcpdump expressions Continued
+
+Using `less` and `greater` (or <, >, <=) you can filter for packet size:
+Packet Size Filter // only see packets below or above a certain size (in bytes) 
+
+```
+$ tcpdump less 64
+$ tcpdump > 1024
+```
+
+But it can be even more expressive using:
+
+  * `and` or `&&`
+  * `or` or `||`
+  * `not` or `!`
+
+Example:
+
+```
+$ tcpdump -nvX src net 192.168.0.0/16 and dst net 10.0.0.0/8 or 172.16.0.0/16
+```
+
+to shows traffic from `192.168/16` that will go to `10/8` or `172.16/16`.
+
+
+## Writing to file 
+`tcpdump` is quite similar to `tshark` and is standard included with many
+distributions. However, you can capture packets and analyze them later in
+WireShark or `snort`.
+
+```
+$ tcpdump -i eth0 -s 65535 -w output.dmp
+```
+
+or you can read it back using `tcpdump` using
+
+```
+$ tcpdump -r output.dmp
+```
 
 
 ## Use case of tcpdump
-How to diagnose if an IP address is in use by two machinese.
+How to diagnose if an IP address is in use by two machines.
 
 ```
 $ tcpdump -lni any arp & ( sleep 1; arp -d 192.168.50.101; ping -c1 -n 192.168.50.101 )
@@ -903,6 +1056,10 @@ $ tcpdump -lni any arp & ( sleep 1; arp -d 192.168.50.101; ping -c1 -n 192.168.5
 Which does
 
   * `tcpdump` listens for ARP packets
+    * `-l` is linebuffered to see the data while capturing
+    * `-n` do not convert addresses to resolved names
+    * `-i any` on any interface
+    * for `arp` proto packets
   * every second
     * remove the ARP entry
     * ping for the target
