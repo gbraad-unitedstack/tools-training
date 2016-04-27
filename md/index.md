@@ -1088,12 +1088,144 @@ To show all current instances of ethernet bridges use the command:
 $ brctl show
 ```
 
+## Add/remove bridge
+
+```
+$ brctl addbr br0
+```
+
+```
+$ brctl delbr br0
+```
+
+## Add/remove interface ports
+
+
+Traffic coming on any of the ports will be forwarded to the other ports
+transparently, so that the bridge is invisible to the rest of the network.
+
+```
+$ brctl addif br0 eth1
+```
+
+```
+$ brctl delif br0 eth1
+```
+
+
+## Netfilter
+If you encounter issues with filtered packets on the bridge, verify that you
+have disabled netfilter.
+
+```
+$ cat /etc/sysctl.conf
+```
+
+    net.bridge.bridge-nf-call-ip6tables = 0
+    net.bridge.bridge-nf-call-iptables = 0
+    net.bridge.bridge-nf-call-arptables = 0
+    EOF
+
+Else it is possible that IP firewall rules apply to frames on a bridge, because
+they will be filtered by the `FORWARD` rule.
+
 
 ## lsof
-lsof is a command meaning "list open files", which is used in many Unix-like systems to report a list of all open files and the processes that opened them. This open source utility was developed and supported by Victor A. Abell, the retired Associate Director of the Purdue University Computing Center. It works in and supports several Unix flavors.
+`lsof - list open files`
+
+Is a tool to report a list of all open files and the processes that opened them.
+
+The command
+
+```
+$ lsof
+```
+
+will list all open files belonging to all active processes.
+
+
+## Examples lsof
+Using a filespecifier you can limit this to a single file or a directory.
+
+```
+$ lsof /var/log/
+```
+
+Using `-c` you can specify a process name and list the opened files by the
+process starting with that name:
+
+```
+$ lsof -c ssh
+```
+
+Using `-u` you can list files opened by a specific user (the `^` prefix excludes
+this user):
+
+```
+$ lsof -u keystone
+```
+
+And `-p` shows the files opened by a specific Process ID
+
+```
+$ lsof -p 1
+```
+
+
+## Examples lsof
+Using `-t` you can return the Process ID associated with open files from that
+process.
+
+```
+$ lsof -t /var/log/glance/api.log
+```
+
+For instance, you can combine this to kill all processes associated with a
+particular user:
+
+```
+$ lsof -9 `lsof -t -u glance`
+```
+
+it will all processes opened by `glance` which has files opened.
+
+
+## Examples lsof
+If you specify more than one options they will be OR-ed.
+
+```
+$ lsof -c ssh -u admin
+```
+
+does not return the expected result for process `ssh` and user `admin`. To solve
+this, you need to add the `-a` option to do an AND operation.
+
+```
+$ lsof -c ssh -u admin -a
+```
+
+
+## Network connections using lsof
+Using the `-i` option we can list opened network connections.
 
 ```
 $ lsof -i
+```
+
+Including `:<n>` will show command that have opened a specific port:
+
+```
+$ lsof -i :22
+```
+
+And `udp` or `tcp` will show connections based on the protocol:
+
+```
+$ lsof -i tcp
+```
+
+```
+$ lsof -i udp
 ```
 
 ---
@@ -1103,6 +1235,9 @@ $ lsof -i
 strace is a diagnostic, debugging and instructional userspace utility for Linux. It is used to monitor interactions between processes and the Linux kernel, which include system calls, signal deliveries, and changes of process state. The operation of strace is made possible by the kernel feature known as ptrace.
 
 systemtap
+
+
+## Combining strace and lsof
 
 
 ## gdb
