@@ -581,13 +581,42 @@ After which you need to run a consistency check against the volume.
 Connectivity
 
 
+## ifcfg-ethX
+On CentOS / RHEL and Fedora systems you can configure networm interfaces using
+a network configuration file.
+
+```
+$ vi /etc/sysconfig/network-scripts/ifcfg-eth0
+```
+
+Be sure to not use `NetworkManager` in our case, and use `network`. You can do
+this with:
+
+```
+$ systemctl disable NetworkManager
+$ systemctl enable network
+$ systemctl stop NetworkManager
+$ systemctl start network
+```
+
+Verify this using
+
+```
+$ nmcli dev status
+```
+
+
 ## iproute2
 `iproute2` is a collection of userspace utilities for controlling and monitoring
 various aspects of networking in the Linux kernel, including routing, network
 interfaces, tunnels, traffic control, and network-related device drivers.
 
+"Most network configuration manuals still refer to ifconfig and route as the
+primary network configuration tools, but ifconfig is known to behave
+inadequately in modern network environments." - [Source](http://www.linuxfoundation.org/collaborate/workgroups/networking/iproute2)
 
-## Utilities obsoleted by iproute2
+
+## Utilities provided by iproute2
 
 | Legacy utility | Obsoleted by	             | Note                            |
 |----------------|---------------------------|---------------------------------|
@@ -600,9 +629,171 @@ interfaces, tunnels, traffic control, and network-related device drivers.
 | `netstat`      | `ip -s`, `ss`, `ip route` | Show various networking statistics|
 
 
+Check `man ip` for more information about the possibilities.
+
+
+## IP address
+To check the IP address given to an interface, use the command
+
+```
+$ ip addr
+```
+
+or 
+
+```
+$ ip a
+```
+
+    1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+        link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+        inet 127.0.0.1/8 scope host lo
+           valid_lft forever preferred_lft forever
+        inet6 ::1/128 scope host
+           valid_lft forever preferred_lft forever
+    2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+        link/ether fa:16:3e:27:c7:10 brd ff:ff:ff:ff:ff:ff
+        inet 10.1.22.69/24 brd 10.1.22.255 scope global dynamic eth0
+           valid_lft 76420sec preferred_lft 76420sec
+        inet6 fe80::f816:3eff:fe27:c710/64 scope link
+           valid_lft forever preferred_lft forever
+
+
+## Add/remove an IP address
+
+Adding an IP address can be done using the command:
+
+```
+$ ip addr add 192.168.50.5 dev eth0
+```
+
+And removing can be done using the command:
+
+```
+$ ip addr del 192.168.50.5/24 dev eth0
+```
+
+
+## Enable/disable a network interface
+To enable a network interface use the command:
+
+```
+$ ip link set eth1 up
+```
+
+And disabling can be done using the command:
+
+```
+$ ip link set eth1 down
+```
+
+Manual page:
+
+```
+$ man ip link
+```
+
+
+## Routing table
+Routing table management is done using the `ip route` command.
+
+To see the current routing table use the command:
+
+```
+$ ip route
+```
+
+    default via 10.1.22.1 dev eth0  proto static  metric 100
+    10.1.22.0/24 dev eth0  proto kernel  scope link  src 10.1.22.69  metric 100
+    172.24.4.224/28 dev br-ex  proto kernel  scope link  src 172.24.4.225
+
+
+## Add/remove static route
+Static routes prevent traffic from passing through the default gateway. This
+way the best way to reach a destination can be given.
+
+To add a static route:
+```
+$ ip route add 10.10.20.0/24 via 192.168.50.100 dev eth0
+```
+
+And to remove a static route:
+```
+$ ip route del 10.10.20.0/24
+```
+
+
+## Persistent static routes
+For CentOS / RHEL and Fedora a persistent static route can be configured via
+a network configuration file.
+
+For example:
+```
+$ vi /etc/sysconfig/network-scripts/route-eth0
+```
+
+    10.10.20.0/24 via 192.168.50.100 dev eth0
+
+
+## Default gateway
+Default gateways can be configured per interface or globally.
+
+```
+$ ip route add default via 192.168.50.100
+```
+
+and can be removed using:
+
+```
+$ ip route del default
+```
+
+Persistent gateway is configured in:
+
+```
+$ vi /etc/sysconfig/network
+```
+
+    GATEWAY=192.168.50.100
+
+
+## See also
+
+  * https://www.centos.org/docs/5/html/5.2/Deployment_Guide/s1-networkscripts-static-routes.html
+
+
+## arping
+Arping is a computer software tool for discovering and probing hosts on a computer network. Arping probes hosts on the attached network link by sending Link Layer frames using the Address Resolution Protocol request method addressed to a host identified by its MAC address of the network interface. The utility program may use ARP to resolve an IP 
+
+
 ## ping
-Echo Request message in Internet Control Message Protocol (ICMP)
-Ping is a computer network administration software utility used to test the reachability of a host on an Internet Protocol (IP) network. It measures the round-trip time for messages sent from the originating host to a destination computer and echoed back to the source. The name comes from active sonar terminology that sends a pulse of sound and listens for the echo to detect objects under water.[1] It is sometimes interpreted as a backronym as packet Internet groper.[2]
+`ping` is a small utitlity to measure the reachability and round-trip time for
+a message to be sent and echoed back by a destination host. It uses a 
+ICMP Echo Request message for this.
+
+After just adding a default gateway for instance, you can verify whether the
+route is working properly:
+
+```
+$ ping www.google.com
+```
+
+or using an IP address.
+
+
+## What happened
+
+  1. Query the DNS server to obtain the IP address of the destination host.
+     (For example: 74.125.236.34)
+  2. The destination address (74.125.236.34) is not within the network range.
+     In Layer-3 (IP header) the DESTINATION IP will be set as `74.125.236.34`.
+  3. In Layer-2, the DESTINATION MAC address will be the filled in with the
+     MAC address of the default gateway (192.168.50.100’s MAC).
+
+When the packet is sent out, the network switch (L2), sends the packet to the
+default gateway since the destination MAC is that of the gateway.
+Once the gateway receives the packet, based on its routing table, it will
+forward the packets further.
 
 
 ## traceroute (tracepath)
@@ -623,9 +814,6 @@ brctl is used to set up, maintain, and inspect the ethernet bridge configuration
 An ethernet bridge is a device commonly used to connect different networks of ethernets together, so that these ethernets will appear as one ethernet to the participants.
 
 
-## arping
-Arping is a computer software tool for discovering and probing hosts on a computer network. Arping probes hosts on the attached network link by sending Link Layer frames using the Address Resolution Protocol request method addressed to a host identified by its MAC address of the network interface. The utility program may use ARP to resolve an IP 
-
 
 
 ## strace
@@ -637,6 +825,9 @@ systemtap
 ## lsof
 lsof is a command meaning "list open files", which is used in many Unix-like systems to report a list of all open files and the processes that opened them. This open source utility was developed and supported by Victor A. Abell, the retired Associate Director of the Purdue University Computing Center. It works in and supports several Unix flavors.
 
+```
+$ lsof -i
+```
 
 ## gdb
 GNU Debugger. The standard debugger for the GNU operating system.
