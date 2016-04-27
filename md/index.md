@@ -581,8 +581,23 @@ After which you need to run a consistency check against the volume.
 Connectivity
 
 
-## ip
-iproute2 is a collection of userspace utilities for controlling and monitoring various aspects of networking in the Linux kernel, including routing, network interfaces, tunnels, traffic control, and network-related device drivers.
+## iproute2
+`iproute2` is a collection of userspace utilities for controlling and monitoring
+various aspects of networking in the Linux kernel, including routing, network
+interfaces, tunnels, traffic control, and network-related device drivers.
+
+
+## Utilities obsoleted by iproute2
+
+| Legacy utility | Obsoleted by	             | Note                            |
+|----------------|---------------------------|---------------------------------|
+| `ifconfig`     | `ip addr`, `ip link`, `ip -s` | Address and link configuration|
+| `route`        | `ip route`                | Routing tables                  |
+| `arp`	         | `ip neigh`                | Neighbors                       |
+| `iptunnel`     | `ip tunnel`               | Tunnels                         |
+| `nameif`       | `ifrename`                | Rename network interfaces       |
+| `ipmaddr`      | `ip maddr`                | Multicast                       |
+| `netstat`      | `ip -s`, `ss`, `ip route` | Show various networking statistics|
 
 
 ## ping
