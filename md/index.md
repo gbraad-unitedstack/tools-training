@@ -762,8 +762,54 @@ $ vi /etc/sysconfig/network
   * https://www.centos.org/docs/5/html/5.2/Deployment_Guide/s1-networkscripts-static-routes.html
 
 
+## ARP
+Addression Resolution Protocol is used to find the address of a network neighbor
+for an IPv4 address.
+
+Whenever you try to ping an IP aadress on the network, your system has to turn
+that IP address into a MAC address. This involves using ARP to resolve the
+address.
+
+If the IP address is not found in the ARP table, the system will then send a
+broadcast packet to the network using the ARP protocol to ask
+`who has 192.168.50.101`.
+
+
+## ARP Table
+Showing the ARP cache table can be done using the command:
+
+```
+$ ip neigh
+```
+
+or
+
+```
+$ ip n
+```
+
+
 ## arping
-Arping is a computer software tool for discovering and probing hosts on a computer network. Arping probes hosts on the attached network link by sending Link Layer frames using the Address Resolution Protocol request method addressed to a host identified by its MAC address of the network interface. The utility program may use ARP to resolve an IP 
+`arping` is a tool for discovering and probing hosts on a computer network. It
+probes hosts on the attached network link by sending Link Layer frames using ARP
+request method addressed to a host identified by its MAC address of the network
+interface.
+
+The command
+
+```
+$ arping -c 2 -I eth0 192.168.50.101
+```
+
+will receive do two requests over interface `eth0` for the IP address.
+
+While
+
+```
+$ arping -c 2 00:11:85:4c:de:af
+```
+
+will return the associated IP address for the given MAC address.
 
 
 ## ping
@@ -796,17 +842,82 @@ Once the gateway receives the packet, based on its routing table, it will
 forward the packets further.
 
 
+## Useful options of ping
+
+Limit the count of ping requests
+
+```
+$ ping -c 192.168.50.101
+```
+
+And flood the target with ping requests
+
+```
+$ ping -f 192.168.50.101
+```
+
+
 ## traceroute (tracepath)
-In computing, traceroute is a computer network diagnostic tool for displaying the route and measuring transit delays of packets across an Internet Protocol network. The history of the route is
+`traceroute` is a network diagnostic tool for displaying the route and measuring
+transit delays of packets on an IP network. This can help identify incorrect
+routing table definitions.
+
+An alternative tool is `tracepath`. `tracepath` uses the sockets API, while
+`traceroute` manipulates raw packages for some of its functionality. Because of
+this, `traceroute` needs root privileges.
 
 
+Note: `ping` only computes the final round-trip times for the destination.
 
-## iftop
-iftop is a command-line system monitor tool that produces a frequently-updated list of network connections. By default, the connections are ordered by bandwidth usage, with only the "top" bandwidth …
+
+## Example use
+```
+$ traceroute google.com
+```
+
+    traceroute to google.com (216.58.197.206), 30 hops max, 60 byte packets
+     1  106.187.33.2 (106.187.33.2)  2.604 ms  2.601 ms  2.563 ms
+
+    [...]
+
+     7  72.14.233.221 (72.14.233.221)  1.969 ms  1.927 ms  1.656 ms
+     8  nrt13s48-in-f14.1e100.net (216.58.197.206)  2.177 ms  1.787 ms  1.677 ms
+
+The first column shows the TTL of the probe.
 
 
 ## tcpdump
-tcpdump is a common packet analyzer that runs under the command line. It allows the user to display TCP/IP and other packets being transmitted or received over a network to which the computer is attached. Distribut
+`tcpdump` is a common command line packet analyzer. It allows the user to display
+TCP/IP and other packets being transmitted or received.
+
+
+
+
+## Use case of tcpdump
+How to diagnose if an IP address is in use by two machinese.
+
+```
+$ tcpdump -lni any arp & ( sleep 1; arp -d 192.168.50.101; ping -c1 -n 192.168.50.101 )
+```
+
+Which does
+
+  * `tcpdump` listens for ARP packets
+  * every second
+    * remove the ARP entry
+    * ping for the target
+
+You would receive an `is-at` from two possible hosts, each with their own MAC
+address.
+
+
+## iftop
+`iftop` is a command-line monitoring tool that shows a list of network
+connections and their bandwidth usage.
+
+It is not a standard tool that is available for CentOS 7. However, it can be
+found in EPEL for EL6.
+
 
 
 ## brctl
