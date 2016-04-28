@@ -104,7 +104,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 
 .level2 {
-    top: 0px !important;
+    top: -80px !important;
 }
 
 .title {
