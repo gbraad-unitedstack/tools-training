@@ -6,6 +6,7 @@ Gerard Braad
 gerard@unitedstack.com
 
 
+  * [Outline](./outline.pdf)
   * [Slides](./slides.html)
     * [LVM](./img/lvm.svg)
   * [Handout](./slides.pdf)

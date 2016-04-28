@@ -1,6 +1,5 @@
-# UOS 401 - Inspection and maintenance tools
+# Inspection and maintenance tools
 
-### Inspection and maintenance tools 
 Gerard Braad
 
 gerard@unitedstack.com
@@ -14,7 +13,7 @@ ways.
 
 The following tools described can help you in pinpointing issues.
 
-    This is just a primer.
+    Note: This is just a primer.
 
 
 ## Divide them into categories
