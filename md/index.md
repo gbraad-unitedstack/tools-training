@@ -7,4 +7,5 @@ gerard@unitedstack.com
 
 
   * [Slides](./slides.html)
+    * [LVM](./img/lvm.svg)
   * [Handout](./slides.pdf)
