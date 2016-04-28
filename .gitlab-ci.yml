@@ -4,7 +4,7 @@ pages:
   script:
   - pandoc -t html5 --template template/reveal-slides-template.html --standalone --section-divs -o index.html ./md/index.md
   - pandoc -t html5 --template template/reveal-slides-template.html --standalone --section-divs -o slides.html ./md/slides.md
-  - pandoc -o slides.pdf ./md/slides.md
+  - pandoc -V geometry:margin=1in -o slides.pdf ./md/slides.md
   - mkdir .public
   - cp -r * .public
   - mv .public public
