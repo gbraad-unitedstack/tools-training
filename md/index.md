@@ -1345,4 +1345,14 @@ GNU Debugger. The standard debugger for the GNU operating system.
 ## pdb
 The module pdb defines an interactive source code debugger for Python programs. It supports setting (conditional) breakpoints and single stepping at the source line level, inspection of stack frames, source code listing, and evaluation of arbitrary Python code in the context of any stack frame.
 
-These libraries help you with Python development: the debugger enables you to step through code, analyze stack frames and set breakpoints etc., and the profilers run code and give you a detailed breakdown of execution times, 
+These libraries help you with Python development: the debugger enables you to step through code, analyze stack frames and set breakpoints etc., and the profilers run code and give you a detailed breakdown of execution times
+
+
+## Another useful tool
+
+`ss - another utility to investigate sockets`
+
+  * `-l` show listening sockets
+  * `-p` show process using socket
+  * `-e` show exteneded information
+
