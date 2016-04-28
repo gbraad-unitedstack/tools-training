@@ -1487,15 +1487,26 @@ the service file to see which command is started.
 ## gdb
 GNU Debugger. The standard debugger for the GNU operating system.
 
+  *  `help`
+  *  `run`
+  *  `step`
+  *  `break` [file]:[linenumber], [function]
+  *  `continue`
+  *  `next` (will not enter function call)
+  *  `print`
+  *  `watch`
+  *  `backtrace`
+  *  ...
+
+
+## Attach to running process
 
 ```
 $ gdb attach <PID>
 ```
 
 
-
     Kernel debugging can be done using the `crash` tool.
-
 
 
 ## Another useful tool
