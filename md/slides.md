@@ -14,6 +14,8 @@ ways.
 
 The following tools described can help you in pinpointing issues.
 
+    This is just a primer.
+
 
 ## Divide them into categories
 
@@ -26,8 +28,9 @@ The following tools described can help you in pinpointing issues.
 ## General tools
 These are tools that are used for general inspection, such as 
 
-  * Process monitoring
-  * Service control
+  * system state
+  * process monitoring
+  * service control
 
 
 ## ps
@@ -279,7 +282,9 @@ Below is an example of the `neutron-server.service` file.
 ## Disk commands
 
   * basic commands
-  * fdisk
+  * preparation tools
+  * mapping
+  * consistency check
 
 
 ## Disk free
@@ -325,13 +330,6 @@ $ alias ducks='du -cks * | sort -rn | head'
   * `-c` produces a grand total
   * `-k` same as `block-size=1K`
   * `-s` summarize, total for each argument
-
-
-## Disk
-
-  * preparation tools
-  * mapping
-  * consistency check
 
 
 ## fdisk
@@ -614,7 +612,9 @@ After which you need to run a consistency check against the volume.
 
 
 ## Network
-Connectivity
+
+  * connectivity
+  * diagnostic
 
 
 ## ifcfg-ethX
@@ -872,8 +872,9 @@ or using an IP address.
   3. In Layer-2, the DESTINATION MAC address will be the filled in with the
      MAC address of the default gateway (192.168.50.100’s MAC).
 
-When the packet is sent out, the network switch (L2), sends the packet to the
-default gateway since the destination MAC is that of the gateway.
+The network switch (L2) sends the packet to the default gateway since the
+destination MAC is that of the gateway.
+
 Once the gateway receives the packet, based on its routing table, it will
 forward the packets further.
 
@@ -890,6 +891,38 @@ And flood the target with ping requests
 
 ```
 $ ping -f 192.168.50.101
+```
+
+## Useful options of ping
+Using `-i [number]` you can change the interval before sending the next packet.
+
+```
+$ ping -i 10 linux.com
+```
+
+Using `-q` the command will only print summary statistics:
+
+```
+$ ping -c 4 -q linux.com
+```
+
+The default packetsize is `56`, using the `-s` option you can change the size
+of the ping packet.
+
+```
+$ ping -s 200 google.com
+```
+
+Pressing `CTRL`+`|` will print the statistics summary will the ping is still
+running.
+
+
+## Route of ping
+Using `-R` you will see the route that is taken for a packet. Many hosts ignore
+or discard this option.
+
+```
+$ ping -R google.com
 ```
 
 
@@ -1398,13 +1431,13 @@ $ lsof -p <PID> -ad 1
 
 
 ## Debugging
+Debugging is a the process of finding and resolving defects that prevent correct
+operation of a computer process.
 
-  * asynchronous
+Many different techniques exist and deserve a presentation in itself.
+
   * synchronous
-
-If one thread stops for a breakpoint, or for some other reason, and another
-thread is blocked in a system call, then the system call may return prematurely.
-
+  * asynchronous (concurrency)
 
 
 ## pdb
@@ -1446,7 +1479,7 @@ the scriptfile.
 | return   | r         | Continue execution until the current function returns.|
 | step     | s         | Continue and break on next instruction.               |
 | next     | n         | Similar to `step`, but does not enter function call)  |
-|          | p         | Evaluate expression and print rhe result              |
+|          | p         | Evaluate expression and print the result              |
 
 Note: `print` will be evaluated by the interpreter. `pp` is pretty print.
 
@@ -1507,6 +1540,12 @@ $ gdb attach <PID>
 
 
     Kernel debugging can be done using the `crash` tool.
+
+
+## Note
+
+If one thread stops for a breakpoint, or for some other reason, and another
+thread is blocked in a system call, then the system call may return prematurely.
 
 
 ## Another useful tool
