@@ -104,7 +104,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 
 .level2 {
-    top: 10px !important;
+    top: 0px !important;
 }
 
 .title {
@@ -121,4 +121,8 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   letter-spacing: -0.03em;
   text-transform: none;
   text-shadow: none;
+}
+
+.odd, .even {
+    color: #ffffff;
 }
