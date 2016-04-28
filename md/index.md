@@ -1228,20 +1228,118 @@ $ lsof -i tcp
 $ lsof -i udp
 ```
 
----
-
 
 ## strace
-strace is a diagnostic, debugging and instructional userspace utility for Linux. It is used to monitor interactions between processes and the Linux kernel, which include system calls, signal deliveries, and changes of process state. The operation of strace is made possible by the kernel feature known as ptrace.
+`strace - trace system calls and signals`
 
-systemtap
+`strace` is a diagnostic and debugging utility for Linux. It is used to monitor
+interactions between processes and the Linux kernel.
+
+This is very helpful when you do not have the source code of the program that
+has a problem.
+
+
+## Examples strace
+The simplest invocation is to use:
+
+```
+$ strace ls
+```
+
+    execve("/bin/ls", ["ls"], [/* 72 vars */]) = 0
+    brk(0)                                  = 0xcb6000
+    access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+    [...]
+    write(1, "lib  workspace\n", 15lib  workspace
+    ) = 30
+    close(1)                                = 0
+    munmap(0x7f64c2eab000, 4096)            = 0
+    close(2)                                = 0
+    exit_group(0)                           = ?
+    +++ exited with 0 +++
+
+which will show all the system calls used by the `ls` command.
+
+
+## Examples strace
+You can also trace for a specific system call:
+
+```
+$ strace -e open ls
+```
+
+It is possible to specify several system calls at once:
+
+```
+$ strace -e open,access,read ls
+```
+
+
+## Examples strace
+You can also trace an existing running process. For this you need the Process ID
+of the program.
+
+```
+$ ps -C mysqld
+```
+
+In this case you will probably see many processes. Attach to the last one for
+instance.
+
+```
+$ strace -p 8642
+```
+
+or
+
+```
+$ strace -p `pidof mysqld`
+```
+
+The execution will be shown until you break out using ^C.
+
+
+## Examples strace
+Below you will find other useful options.
+
+The `-r` option which allows you to print relative execution time for each
+system call:
+
+```
+$ strace -r ls
+```
+
+While the `-c` option will generate a statistics report:
+
+```
+$ strace -c ls
+```
+
+
+## Saving a trace
+Usinf the `-o` option you can save a trace to a file:
+
+```
+$ strace -o trace.txt ls
+```
+
+This can then be shared or attached to a bug report.
 
 
 ## Combining strace and lsof
+Using `strace` and `lsof` it is possible to debug process hangs.
+
+There are several ways a proces can be blocked, for instance:
+
+  * it is blocked waiting for a resource that isn't available
+  * or is in an infinite loop
 
 
 ## gdb
 GNU Debugger. The standard debugger for the GNU operating system.
+
+
+    Kernel debugging can be done using the `crash` tool.
 
 
 ## pdb
