@@ -841,7 +841,7 @@ The command
 $ arping -c 2 -I eth0 192.168.50.101
 ```
 
-will receive do two requests over interface `eth0` for the IP address.
+will make two requests over interface `eth0` for the IP address.
 
 While
 
