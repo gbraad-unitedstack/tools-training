@@ -1316,6 +1316,14 @@ $ strace -c ls
 ```
 
 
+## Important option
+Often processes will create a subprocess. To make sure you can trace them use
+the `-f` option.
+
+This will trace child processes as they are created by currently traced
+processes as a result of the fork system call.
+
+
 ## Saving a trace
 Usinf the `-o` option you can save a trace to a file:
 
@@ -1351,6 +1359,8 @@ These libraries help you with Python development: the debugger enables you to st
 ## Another useful tool
 
 `ss - another utility to investigate sockets`
+
+It dump socket statistics. It allows showing information similar to netstat.
 
   * `-l` show listening sockets
   * `-p` show process using socket
