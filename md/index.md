@@ -33,7 +33,8 @@ These are tools that are used for general inspection, such as
 ## ps
 `ps - report process status`
 
-The `ps` program displays the currently-running processes. A related Unix utility named `top` provides a 
+The `ps` program displays the currently-running processes. A related Unix
+utility named `top` provides a 
 
 
 ## ps - Command line options
@@ -45,7 +46,8 @@ Note that `ps -aux` is different than `ps aux`.
 
 
 ## ps - Basic examples
-By default `ps` selects all processes with the same user ID and associated with the same terminal as the caller.
+By default `ps` selects all processes with the same user ID and associated with
+the same terminal as the caller.
 
 ```
 $ ps
@@ -184,8 +186,8 @@ $ vmstat -s
 
 
 ## Service management
-Processes on Linux/Unix are owned by the `init` process, which primary role is to
-start processes according to a script from `/etc/inittab` or `/etc/init.d`
+Processes on Linux/Unix are owned by the `init` process, which primary role is
+to start processes according to a script from `/etc/inittab` or `/etc/init.d`
 
 ```
 $ service
@@ -220,7 +222,8 @@ It links the scripts in `/etc/rc?.d` accordingly.
 
 
 ## Service management
-`systemctl` is a linux command to control the systemd system and service manager.
+`systemctl` is a linux command to control the systemd system and service
+manager.
 
 To show all services you have to limit to showing the service unit.
 
@@ -252,7 +255,9 @@ $ systemctl enable sshd.service
 ## Disk free
 `df - report file system disk space usage`
 
-`df` (disk free) is a standard Unix command used to display the amount of available disk space for file systems on which the invoking user has appropriate read access.
+`df` (disk free) is a standard Unix command used to display the amount of
+available disk space for file systems on which the invoking user has
+appropriate read access.
 
 ```
 $ df -h
@@ -264,7 +269,8 @@ makes the output human-readable.
 ## Disk usage
 `du - estimate file space usage`
 
-`du` (disk usage) is a standard Unix command used to estimate file space usage—space used under a particular directory or files on a file system.
+`du` (disk usage) is a standard Unix command used to estimate file space
+usage—space used under a particular directory or files on a file system.
 
 ```
 $ du -h
@@ -1341,6 +1347,33 @@ There are several ways a proces can be blocked, for instance:
 
   * it is blocked waiting for a resource that isn't available
   * or is in an infinite loop
+
+
+## file-descriptors
+When you `strace` a running application, you might see
+
+    select(1, [0], NULL, [0], NULL
+
+Which is a system call 
+
+    select() and pselect() allow a program to monitor multiple file descriptors,
+    waiting until one or more of the file descriptors become "ready"
+
+If you want to know what this file is, run:
+
+```
+$ lsof -p <PID> -ad 1
+```
+
+
+## Debugging
+
+  * asynchronous
+  * synchronous
+
+If one thread stops for a breakpoint, or for some other reason, and another
+thread is blocked in a system call, then the system call may return prematurely.
+
 
 
 ## gdb
