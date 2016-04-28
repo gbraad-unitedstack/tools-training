@@ -36,8 +36,7 @@ These are tools that are used for general inspection, such as
 ## ps
 `ps - report process status`
 
-The `ps` program displays the currently-running processes. A related Unix
-utility named `top` provides a 
+The `ps` program displays the currently-running processes.
 
 
 ## ps - Command line options
