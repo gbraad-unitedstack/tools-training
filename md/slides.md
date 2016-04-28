@@ -387,6 +387,10 @@ Linux kernel.
 It is implemented as a device mapper target.
 
 
+## LVM overview
+![LVM](./img/lvm.png "LVM")
+
+
 ## LVM usecases
   * Managing large hard disk farms by allowing disks to be added and replaced
     without downtime or service disruption, in combination with hot swapping.
