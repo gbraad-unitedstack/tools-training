@@ -788,13 +788,16 @@ and can be removed using:
 $ ip route del default
 ```
 
-Persistent gateway is configured in:
+Persistent global gateway is configured in:
 
 ```
 $ vi /etc/sysconfig/network
 ```
 
     GATEWAY=192.168.50.100
+
+Otherwise specific gateways needs to be specified in the interface
+configuration file.
 
 
 ## See also
