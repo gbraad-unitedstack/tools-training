@@ -222,7 +222,7 @@ It links the scripts in `/etc/rc?.d` accordingly.
 
 
 ## Service management
-`systemctl` is a linux command to control the systemd system and service
+`systemctl` is a linux command to control the `systemd` system and service
 manager.
 
 To show all services you have to limit to showing the service unit.
@@ -233,6 +233,8 @@ $ systemctl list-units -t service --all
 
 Note: omitting `--all` will only show active services.
 
+
+## Service interaction
 To look at the details of a specific service
 
 ```
@@ -244,6 +246,34 @@ You can enable and disable with
 ```
 $ systemctl enable sshd.service
 ```
+
+and
+
+```
+$ systemctl disable sshd.service
+```
+
+
+## Service files
+The files used by `systemd` to start a service process are located in
+`/usr/lib/systemd/system`.
+
+Below is an example of the `neutron-server.service` file.
+
+    [Unit]
+    Description=OpenStack Neutron Server
+    After=syslog.target network.target
+    
+    [Service]
+    Type=notify
+    User=neutron
+    ExecStart=/usr/bin/neutron-server --config-file /usr/share/neutron/neutron-dist.conf --config-dir /usr/share/neutron/server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini --config-dir /etc/neutron/conf.d/common --config-dir /etc/neutron/conf.d/neutron-server --log-file /var/log/neutron/server.log
+    PrivateTmp=true
+    NotifyAccess=all
+    KillMode=process
+    
+    [Install]
+    WantedBy=multi-user.target
 
 
 ## Disk commands
