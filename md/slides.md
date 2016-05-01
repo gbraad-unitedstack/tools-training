@@ -39,14 +39,6 @@ These are tools that are used for general inspection, such as
 The `ps` program displays the currently-running processes.
 
 
-## ps - Command line options
-Note that `ps -aux` is different than `ps aux`.
-
-  * UNIX options, which may be grouped and must be preceded by a dash (`-`)
-  * BSD options, which may be grouped and must not be used with a dash
-  * GNU long options, which are preceded by two dashes (`--`)
-
-
 ## ps - Basic examples
 By default `ps` selects all processes with the same user ID and associated with
 the same terminal as the caller.
@@ -62,7 +54,7 @@ $ ps
 
 
 ## ps - Basic examples
-To see every process running on the system, using the standard syntax:
+To see every process running on the system, use the standard syntax:
 
 ```
 $ ps -e
@@ -77,6 +69,14 @@ This does
 
   * select all processes
   * full listing
+
+
+## ps - Command line options
+Note that `ps -aux` is different than `ps aux`.
+
+  * UNIX options, which may be grouped and must be preceded by a dash (`-`)
+  * BSD options, which may be grouped and must not be used with a dash
+  * GNU long options, which are preceded by two dashes (`--`)
 
 
 ## ps - Basic examples
