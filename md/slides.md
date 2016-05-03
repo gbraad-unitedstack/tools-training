@@ -1294,6 +1294,8 @@ Including `:<n>` will show command that have opened a specific port:
 $ lsof -i :22
 ```
 
+Note: this is very similar to using `netstat -nap`
+
 And `udp` or `tcp` will show connections based on the protocol:
 
 ```
