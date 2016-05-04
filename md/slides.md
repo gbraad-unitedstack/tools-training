@@ -805,7 +805,7 @@ configuration file.
 
 
 ## ARP
-Addression Resolution Protocol is used to find the address of a network neighbor
+Address Resolution Protocol is used to find the address of a network neighbor
 for an IPv4 address.
 
 Whenever you try to ping an IP aadress on the network, your system has to turn
@@ -1260,7 +1260,7 @@ For instance, you can combine this to kill all processes associated with a
 particular user:
 
 ```
-$ lsof -9 `lsof -t -u glance`
+$ kill -9 `lsof -t -u glance`
 ```
 
 it will all processes opened by `glance` which has files opened.
