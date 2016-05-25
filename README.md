@@ -5,6 +5,8 @@ Inspection and maintenance tools
 This course is part of the training at UnitedStack and will introduce you to
 several inspection and maintenance tools.
 
+  * [Table of Contents](SUMMARY.md)
+
 
 Author and contributors
 -----------------------
