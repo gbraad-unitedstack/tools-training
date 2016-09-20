@@ -1,14 +1,14 @@
-image: registry.gitlab.com/gbraad/docugen:latest
-
 pages:
+  image: registry.gitlab.com/gbraad/docugen:latest
   script:
-  - pandoc -t html5 --template template/reveal-slides-template.html --standalone --section-divs -o index.html ./md/index.md
-  - pandoc -t html5 --template template/reveal-slides-template.html --standalone --section-divs -o slides.html ./md/slides.md
-  - pandoc -V geometry:margin=1in -o slides.pdf ./md/slides.md
-  - pandoc -V geometry:margin=1in -o outline.pdf ./md/outline.md
-  - mkdir .public
-  - cp -r * .public
-  - mv .public public
+    - git clone https://gitlab.com/gbraad/document-generation-assets.git assets --depth 1
+    - mkdir public
+    - cp -r assets/public-content/reveal/* public/
+    - pandoc -t html5 --template assets/templates/reveal-slides-template.html --standalone --section-divs ./index.md -o ./public/index.html
+    - pandoc -t html5 --template assets/templates/reveal-slides-template.html --standalone --section-divs ./slides.md -o ./public/slides.html
+    - pandoc -V geometry:margin=1in ./slides.md -o ./public/slides.pdf
+    - pandoc -V geometry:margin=1in ./outline.md -o ./public/outline.pdf
+    - cp -r img public/
   artifacts:
     paths:
     - public
